@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -191,7 +192,7 @@ func (p *Proxy) handleIncoming(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	limited := http.MaxBytesReader(w, r.Body, maxBodyBytes)
-	body, err := io.ReadAll(limited)
+	body, err := ioutil.ReadAll(limited)
 	if err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
@@ -304,7 +305,7 @@ func (p *Proxy) deliver(job *QueuedRequest) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		b, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+		b, _ := ioutil.ReadAll(io.LimitReader(resp.Body, 512))
 		return &UpstreamError{
 			StatusCode: resp.StatusCode,
 			Body:       string(b),
@@ -359,7 +360,7 @@ func (t *TelegramNotifier) SendMessage(text string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		b, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+		b, _ := ioutil.ReadAll(io.LimitReader(resp.Body, 512))
 		return &UpstreamError{
 			StatusCode: resp.StatusCode,
 			Body:       string(b),
