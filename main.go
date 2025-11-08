@@ -253,7 +253,7 @@ func (p *Proxy) processJob(job *QueuedRequest) {
 		job.Attempts++
 
 		if err := p.deliver(job); err != nil {
-			log.Printf("delivery failed (id=%s attempt=%d): %v", job.ID, job.Attempts, err)
+			log.Printf("delivery failed (id=%s attempt=%d path=%s): %v", job.ID, job.Attempts, job.Path, err)
 
 			if job.Attempts > 3 && !job.AlertSent && p.telegram != nil {
 				job.AlertSent = true
@@ -269,7 +269,7 @@ func (p *Proxy) processJob(job *QueuedRequest) {
 			continue
 		}
 
-		log.Printf("delivery succeeded (id=%s attempts=%d)", job.ID, job.Attempts)
+		//log.Printf("delivery succeeded (id=%s attempts=%d)", job.ID, job.Attempts)
 		return
 	}
 }
