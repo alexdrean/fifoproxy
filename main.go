@@ -304,7 +304,7 @@ func (p *Proxy) deliver(job *QueuedRequest) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+	if resp.StatusCode < 200 || resp.StatusCode >= 500 {
 		b, _ := ioutil.ReadAll(io.LimitReader(resp.Body, 512))
 		return &UpstreamError{
 			StatusCode: resp.StatusCode,
